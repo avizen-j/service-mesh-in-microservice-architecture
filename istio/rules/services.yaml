@@ -1,0 +1,44 @@
+# Gateway load balancer service.
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service
+  namespace: netcore-istio
+spec:
+  selector:
+    app: gateway-service
+  type: LoadBalancer
+  ports:
+    - name: http
+      port: 5001
+      targetPort: 80
+---
+# Validation service load balancer service.
+apiVersion: v1
+kind: Service
+metadata:
+  name: validation-service
+  namespace: netcore-istio
+spec:
+  selector:
+    app: validation-service
+  type: LoadBalancer
+  ports:
+    - name: validation-service
+      port: 5002
+      targetPort: 80
+---
+# General load balancer service used by v1 and v2 accounts service versions.
+apiVersion: v1
+kind: Service
+metadata:
+  name: accounts-service
+  namespace: netcore-istio
+spec:
+  selector:
+    app: accounts-service
+  type: LoadBalancer
+  ports:
+  - name: accounts-service
+    port: 5003
+    targetPort: 80

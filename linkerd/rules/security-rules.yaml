@@ -1,0 +1,47 @@
+# Following rules needed for kubernetes healthchecks.
+apiVersion: policy.linkerd.io/v1beta1
+kind: Server
+metadata:
+  namespace: netcore-linkerd
+  name: admin
+spec:
+  port: linkerd-admin
+  podSelector:
+    matchLabels: {} # every pod
+  proxyProtocol: HTTP/1
+---
+apiVersion: policy.linkerd.io/v1beta1
+kind: ServerAuthorization
+metadata:
+  namespace: netcore-linkerd
+  name: admin-everyone
+spec:
+  server:
+    name: admin
+  client:
+    unauthenticated: true
+---
+# Access gateway from outside.
+apiVersion: policy.linkerd.io/v1beta1
+kind: Server
+metadata:
+  namespace: netcore-linkerd
+  name: gateway-service
+spec:
+  port: 80
+  podSelector:
+    matchLabels:
+      app: gateway-service
+      version: v1
+  proxyProtocol: HTTP/1
+---
+apiVersion: policy.linkerd.io/v1beta1
+kind: ServerAuthorization
+metadata:
+  namespace: netcore-linkerd
+  name: gateway-everyone
+spec:
+  server:
+    name: gateway-service
+  client:
+    unauthenticated: true

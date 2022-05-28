@@ -1,0 +1,21 @@
+prometheus:
+  url: http://prometheus.linkerd-viz.svc.cluster.local
+
+rules:
+  default: false
+  custom:
+    - seriesQuery: 'response_latency_ms_bucket{namespace!="",pod!=""}'
+      resources:
+        template: <<.Resource>>
+      name:
+        matches: ^(.*)_bucket$
+        as: "avg_latency_over_30s"
+      metricsQuery: avg_over_time(histogram_quantile(0.99, sum(irate(<<.Series>>{<<.LabelMatchers>>, direction="inbound"}[5m])) by (le, <<.GroupBy>>))[30s:])
+
+    - seriesQuery: 'request_total{namespace!="",pod!=""}'
+      resources:
+        template: <<.Resource>>
+      name:
+        matches: "^(.*)_total$"
+        as: "request_per_second"
+      metricsQuery: 'sum(irate(<<.Series>>{<<.LabelMatchers>>, direction="inbound"}[5m])) by (<<.GroupBy>>)'

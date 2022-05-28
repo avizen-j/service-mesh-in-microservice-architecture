@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: netcore-accounts-service-sa
+  namespace: netcore-linkerd
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netcore-accounts-service
+  namespace: netcore-linkerd
+  annotations:
+    linkerd.io/inject: enabled
+    config.linkerd.io/default-inbound-policy: all-unauthenticated
+  labels:
+    name: netcore-accounts-service
+    app: accounts-service
+    version: v1
+spec:
+  selector:
+    matchLabels:
+      app: accounts-service
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        linkerd.io/inject: enabled
+        config.linkerd.io/default-inbound-policy: all-unauthenticated
+      labels:
+        app: accounts-service
+        version: v1
+    spec:
+      serviceAccountName: netcore-accounts-service-sa
+      containers:
+      - name: accounts-service
+        image: netcore-accounts-service
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"    
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Never

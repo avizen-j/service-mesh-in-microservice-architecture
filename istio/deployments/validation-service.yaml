@@ -1,0 +1,39 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: validation-service-sa
+  namespace: netcore-istio
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: validation-service
+  namespace: netcore-istio
+  labels:
+    name: validation-service
+spec:
+  selector:
+    matchLabels:
+      app: validation-service
+      version: v1
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: validation-service
+        version: v1
+    spec:
+      serviceAccountName: validation-service-sa
+      containers:
+      - name: validation-service
+        image: validation-service
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "400m"
+          limits:
+            memory: "256Mi"
+            cpu: "800m"
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Never

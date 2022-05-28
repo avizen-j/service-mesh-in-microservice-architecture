@@ -1,0 +1,86 @@
+# Gateway load balancer service.
+apiVersion: v1
+kind: Service
+metadata:
+  name: gateway-service
+  namespace: netcore-linkerd
+  labels:
+    app: gateway-service
+  annotations:
+    linkerd.io/inject: enabled
+    config.linkerd.io/default-inbound-policy: all-authenticated
+spec:
+  selector:
+    app: gateway-service
+  type: LoadBalancer
+  ports:
+    - name: gateway-service
+      port: 5010
+      targetPort: 80
+---
+# Validation service load balancer service.
+apiVersion: v1
+kind: Service
+metadata:
+  name: validation-service
+  namespace: netcore-linkerd
+  labels:
+    app: gateway-service
+  annotations:
+    linkerd.io/inject: enabled
+    config.linkerd.io/default-inbound-policy: all-authenticated
+spec:
+  selector:
+    app: validation-service
+  type: LoadBalancer
+  ports:
+    - name: validation-service
+      port: 5011
+      targetPort: 80
+---
+# Netcore service aka v1 of account service.
+apiVersion: v1
+kind: Service
+metadata:
+  name: accounts-service-v1
+  namespace: netcore-linkerd
+spec:
+  selector:
+    app: accounts-service
+    version: v1
+  ports:
+  - port: 5012
+    targetPort: 80
+    name: accounts-service
+---
+# Python service aka v2 of account service.
+apiVersion: v1
+kind: Service
+metadata:
+  name: accounts-service-v2
+  namespace: netcore-linkerd
+spec:
+  selector:
+    app: accounts-service
+    version: v2
+  ports:
+  - port: 5012
+    targetPort: 80
+    name: accounts-service
+---
+# Common.
+apiVersion: v1
+kind: Service
+metadata:
+  name: accounts-service
+  namespace: netcore-linkerd
+  labels:
+    app: accounts-service
+    service: accounts-service
+spec:
+  ports:
+  - port: 5012
+    targetPort: 80
+    name: accounts-service
+  selector:
+    app: accounts-service

@@ -1,0 +1,39 @@
+# Weight traffic splitting
+apiVersion: split.smi-spec.io/v1alpha1
+kind: TrafficSplit
+metadata:
+  name: accounts-service-traffic-split
+  namespace: netcore-linkerd
+spec:
+  service: accounts-service
+  backends:
+  - service: accounts-service-v1
+    weight: 70
+  - service: accounts-service-v2
+    weight: 30
+---
+# Not supported yet. Linkerd-smi supports only v1alpha1 and v1alpha2 versions.
+# apiVersion: split.smi-spec.io/v1alpha4
+# kind: TrafficSplit
+# metadata:
+#   name: accounts-service-traffic-split
+#   namespace: netcore-linkerd
+# spec:
+#   service: accounts-service
+#   matches:
+#   - kind: HTTPRouteGroup
+#     name: country-condition
+#   backends:
+#   - service: accounts-service-v1
+#     weight: 0
+#   - service: accounts-service-v2
+#     weight: 100
+# ---
+# apiVersion: specs.smi-spec.io/v1alpha4
+# kind: HTTPRouteGroup
+# metadata:
+#   name: country-condition
+# matches:
+# - name: user-country
+#   headers:
+#     country: ".*denmark.*"

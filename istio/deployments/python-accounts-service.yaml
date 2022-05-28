@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: python-accounts-service-sa
+  namespace: netcore-istio
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: python-accounts-service
+  namespace: netcore-istio
+  labels:
+    name: python-accounts-service
+    app: accounts-service
+    version: v2
+spec:
+  selector:
+    matchLabels:
+      app: accounts-service
+      version: v2
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: accounts-service
+        version: v2
+    spec:
+      serviceAccountName: python-accounts-service-sa
+      containers:
+      - name: accounts-service
+        image: python-accounts-service
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"    
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Never

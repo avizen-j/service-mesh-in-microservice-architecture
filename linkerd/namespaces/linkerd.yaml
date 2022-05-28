@@ -1,0 +1,6 @@
+kind: Namespace
+apiVersion: v1
+metadata:
+  name: netcore-linkerd
+  labels:
+    name: netcore-linkerd

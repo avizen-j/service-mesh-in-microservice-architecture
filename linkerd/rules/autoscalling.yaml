@@ -1,0 +1,30 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: gateway-service-hpa
+  namespace: netcore-linkerd
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: gateway-service
+  minReplicas: 1
+  maxReplicas: 8
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 30
+  metrics:
+    # - type: Pods
+    #   pods:
+    #     metric:
+    #       name: avg_latency_over_30s
+    #     target:
+    #       type: AverageValue
+    #       averageValue: 100
+    - type: Pods
+      pods:
+        metric:
+          name: request_per_second
+        target:
+          type: AverageValue
+          averageValue: 25
